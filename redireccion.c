@@ -1,16 +1,20 @@
 /*-----------------------------------------------------+      
  |     R E D I R E C C I O N . C                       |
  +-----------------------------------------------------+
- |     Version    :                        
- |     Autor :   
- |     Asignatura :  SOP-GIIROB                                                       
- |     Descripcion: 
+ |     Version    :                                    |
+ |     Autor :   Josue Piedrasanta                     |
+ |     Asignatura :  SOP-GIIROB                        |                               
+ |     Descripcion: En este fichero se encontrará el   |
+ |     código que se encargará de implementar las      |
+ |     redirecciones de entrada y salida como la       |
+ |     creación de tuberías.                           |
  +-----------------------------------------------------*/
 #include "defines.h"
 #include "analizador.h"
 #include "redireccion.h"
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 
 REDIRECCION_ORDENES red_ordenes;
 
@@ -35,18 +39,36 @@ int pipeline(int nordenes, char * infile, char * outfile, int append, int bgnd)
     //Crea la conexión de las tuberias, por lo cual conecta la orden actual con la siguiente, de la siguente manera en la salida deja la "escritura" de la fila actual y luego
     //pasa a la siguiente orden y deja la "lectura" en la entrada
     for (int i = 0; i < nordenes - 1; i++){
-        pipe(fd);
+        if(pipe(fd)== -1){
+            return ERROR;
+        }
         red_ordenes[i].salida = fd[1];
         red_ordenes[i+1].entrada = fd[0];
     }
-    //Comprueba que infile no este vacio, por lo cual si no lo esta abre el archivo y lo asigna en la posicion 0 de la entrada
+
+     //Comprueba que infile no este vacio, por lo cual si no lo esta abre el archivo y lo asigna en la posicion 0 de la entrada
     if(strcmp(infile,"")!= 0){
         int ent = open(infile,O_RDONLY);
         if (ent == -1){
-            return 0;
+            return ERROR;
         }
         red_ordenes[0].entrada = ent;
+    }  
+
+    //Comprueba si la ejecución es en background y no hay redirección de entrada
+    else if (bgnd) {
+        //Si es así, comprueba si la entrada estándar del shell es un terminal 
+        if (isatty(STDIN_FILENO)) {
+            //Si lo es, usa /dev/null como entrada para la primera orden y evitar que lea del teclado en background
+            int bg = open("/dev/null", O_RDONLY);
+            if (bg != -1) {
+                red_ordenes[0].entrada = bg;
+            }else{
+                return ERROR;
+            }
+        }
     }
+
     //Verifico el tipo de salida
     int flags;
     if (append != 0){
@@ -54,25 +76,18 @@ int pipeline(int nordenes, char * infile, char * outfile, int append, int bgnd)
     }else{
         flags = O_WRONLY | O_CREAT | O_TRUNC;
     }
-    //Comprueba que outfile no este vacio, por lo cual si no lo esta abre el archivo y lo asigna en la posicion final de la salida
+    
+     //Comprueba que outfile no este vacio, por lo cual si no lo esta abre el archivo y lo asigna en la posicion final de la salida
     if(strcmp(outfile,"")!= 0){
         int sal = open(outfile,flags,0666);
         if (sal == -1){
-            return 0;
+            return ERROR;
         }
         red_ordenes[nordenes-1].salida = sal;
     }
-    //Comprueba si se utiliza el backgound, si lo es se utiliza el /dev/NULL y se aplica en la tabla de descriptores
-    if(bgnd){
-        int rd = open("/dev/NULL",O_RDONLY);
-        if (rd == -1){
-            return 0;
-        }
-        dup2(rd,0);
-        close(rd);
-    }
+
     return OK;
-} // Fin de la funci�n "pipeline"
+} // Fin de la función "pipeline"
 
 
 //Redirige la entrada estandar al descriptor

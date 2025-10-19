@@ -30,6 +30,7 @@
 #define MAXARG 20
 #define MAXNAME 100
 #define PIPELINE 10
+#define PATH_MAX 4096
 
 
 typedef struct
