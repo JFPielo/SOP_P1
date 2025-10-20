@@ -14,11 +14,12 @@
 #include <unistd.h> 
 #include <sys/wait.h> 
 #include <fcntl.h> 
-#include <stdio.h>   // <-- añadido
+#include <stdio.h>   
 #include <string.h>
 
-// Usa visualizar() desde aquí
+//Esto para utilizar la función visualizar que está en ush.c
 extern void visualizar(void);
+
 
 
 
