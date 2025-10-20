@@ -143,8 +143,12 @@ int main(int argc, char * argv[])
       m_argumentos = get_argumentos();
 
         if (m_n > 0) {
-          //Compruebo que exista una sola orden y no sea en background
-          if(m_n == 1 && !es_background()){
+          //Compruebo que exista una sola orden, que no sea en background y que sea cd o exit
+          int interna = 0;
+          if(strcmp(m_argumentos[0][0],"cd")==0 || strcmp(m_argumentos[0][0],"exit")==0){
+            interna = 1;
+          }
+          if(m_n == 1 && !es_background() && interna){
             //Compruebo que la orden sea cd
             if(strcmp(m_argumentos[0][0],"cd")==0) {
               //Compuebo que la función f_cd se ejecute correctamente
@@ -158,7 +162,10 @@ int main(int argc, char * argv[])
               printf("logout\n");
               exit(0);
             }
+            
+            //Muestra el visualizador tras ejecutar la ordenn interna
             visualizar();
+            //Recolecta hijos que hayan terminado mienstras se ejecutaba el cd o exit
             recolector();
             
           }

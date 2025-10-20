@@ -21,7 +21,7 @@ REDIRECCION_ORDENES red_ordenes;
 //Inicializa los valores de la estructura dejando un 0 en la entrada y un 1 en la salida
 void redireccion_ini(void)
 {
-    for (int i = 0; i<PIPELINE;i++){
+    for (int i = 0; i<PIPELINE-1;i++){
         red_ordenes[i].entrada = 0;
         red_ordenes[i].salida = 1;
     }
@@ -32,6 +32,17 @@ void redireccion_ini(void)
 
 int pipeline(int nordenes, char * infile, char * outfile, int append, int bgnd)
 {
+
+    //Comprobación de errorers
+    if(nordenes > PIPELINE -1){
+        return ERROR;
+    }
+
+    if(nordenes < 1){
+        return ERROR;
+    }
+
+
     //Inicializa estructura
     redireccion_ini();
     //Inicializa arreglo
@@ -116,7 +127,7 @@ int redirigir_salida(int i)
 //Cierra todos los tubos y descriptores ya utilizados
 int cerrar_fd()
 {
-    for(int i =0 ; i < PIPELINE; i++){
+    for(int i =0 ; i < PIPELINE-1; i++){
         if (red_ordenes[i].entrada > STDERR_FILENO){
             close(red_ordenes[i].entrada);
             red_ordenes[i].entrada = 0;

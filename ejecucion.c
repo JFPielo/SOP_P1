@@ -73,7 +73,7 @@ int ejecutar (int nordenes , int *nargs , char **ordenes , char ***args , int bg
             cerrar_fd();
             //Ejecuta los argumentos
             execvp(args[i][0], args[i]);
-             //Utilizo el _exit(127) para indicar error en la ejecución del hijo
+            //Utilizo el _exit(127) para indicar error en la ejecución del hijo
             //Esto con el fin de no afectar al estado del padre y que termine el proceso actual
             _exit(127);
         } 
