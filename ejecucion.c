@@ -33,7 +33,7 @@ int ejecutar (int nordenes , int *nargs , char **ordenes , char ***args , int bg
         if (aux < 0) {
             return ERROR;
         }
-        //Si el proceso auxiliar padre, imprimira el mensaje de ejecución en background y terminará
+        //Si el proceso shell padre, imprimira el mensaje de ejecución en background y terminará
         if(aux !=0){
             printf("-----Ejecución en segundo plano-----\n");
             fflush(stdout);
@@ -41,7 +41,7 @@ int ejecutar (int nordenes , int *nargs , char **ordenes , char ***args , int bg
             return OK;
         }
     }
-    //Ahora los procesos hijos de auxiliar seguiran en dado caso se haya ejecutado en background 
+    //Ahora el proceso aux hijo seguira en dado caso se haya ejecutado en background 
     //En foreground no existe ese proceso auxiliar
     //Arrego que almacenara los pids de los procesos
     pid_t pids[PIPELINE];

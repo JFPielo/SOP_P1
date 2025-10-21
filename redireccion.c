@@ -43,7 +43,7 @@ int pipeline(int nordenes, char * infile, char * outfile, int append, int bgnd)
     }
 
 
-    //Inicializa estructura
+    //Inicializa estructura 
     redireccion_ini();
     //Inicializa arreglo
     int fd[2];

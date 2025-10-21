@@ -39,16 +39,17 @@ void recolector(void) {
 }
 
 
-//Variable que almacena almacenará el directorio previo, PATH_MAX esta definido en defines.h
-static char prev_dir[PATH_MAX]; 
+//Variable que almacena almacenará el directorio previo
+static char prev_dir[255]; 
 
 
 //Función para orden interna cd
 static int f_cd(int argc, char **argv) {
-    //Variable que almacenará el directorio actual, PATH_MAX esta definido en defines.h
-    char dir_act[PATH_MAX];
+    
+    //Variable que almacenará el directorio actual
+    char dir_act[255];
     //Obtiene el directorio actual y comprueba que no esté vacío
-    if(getcwd(dir_act,sizeof(dir_act)) == NULL) {
+    if(getcwd(dir_act,MAXLINE) == NULL) {
         perror("cd: getcwd error");
         //Establece el directorio actual como vacío
         dir_act[0] = '\0';
@@ -90,6 +91,7 @@ static int f_cd(int argc, char **argv) {
             return -1;
         }
     }
+
     //Donde sucede la magia tras comprobar que es lo quiere hacer con el cd
     //Por lo cual, decido comprobar que el chdir se ejecute correctamente sino imprimo un error
     if (chdir(dir_next) == -1) {
@@ -99,7 +101,7 @@ static int f_cd(int argc, char **argv) {
     //Se actualiza el directorio previo por el actual y colocó un null al final por seguridad
     if(dir_act[0] != '\0') {
       //Como no se puede asignar un arreglo luego de declararlos, utilizo strncpy para copiar los directorios
-        strncpy(prev_dir, dir_act, PATH_MAX);
+        strncpy(prev_dir, dir_act, MAXLINE);
         prev_dir[sizeof(prev_dir)-1] = '\0';
     }
     return OK;
